@@ -13,7 +13,7 @@ An async queue.
 
 ## Usage
 
-```
+```js
 var Queue = require('multi-queue');
 var q = new Queue();
 
