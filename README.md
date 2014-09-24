@@ -14,21 +14,22 @@ An async queue.
 ## Usage
 
 ```js
-var Queue = require('multi-queue');
-var q = new Queue();
+var mqueue = require('multi-queue');
+var mq = mqueue();
 
 q.on('drain:tweets', function(info) {
   console.log(info.queue); // tweets
   console.log(info.length); // 0
 });
 
-
 // Request pages 1 - 5,
 // 3 pages at a time
 // disallow duplicate requests per unique
 [1, 2, 2, 3, 4, 5].forEach(function(page) {
   q.push('tweets', function(done) {
-    twitter.fetchPage(page, function() {
+    twitter.fetchPage(page, function(err, tweets) {
+      // Do some stuff with tweets
+      done(); // 
     });
   }, { concurrency: 3, unique: 'fetch' + page })
 })

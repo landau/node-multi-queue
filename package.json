@@ -1,0 +1,41 @@
+{
+  "name": "multi-queue",
+  "version": "0.0.1",
+  "description": "An async multi queue with strategies",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "jshint index.js ./lib ./test",
+    "test": "mocha -R spec --recursive ./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/landau/node-multi-queue.git"
+  },
+  "keywords": [
+    "queue",
+    "multi",
+    "key",
+    "async"
+  ],
+  "author": {
+    "name": "Trevor Landau",
+    "email": "landautrevor@gmail.com",
+    "url": "http://trevorlandau.net"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/landau/node-multi-queue/issues"
+  },
+  "homepage": "https://github.com/landau/node-multi-queue",
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "jshint": "^2.5.5",
+    "mocha": "^1.21.4",
+    "sinon": "^1.10.3",
+    "sinon-chai": "^2.5.0"
+  },
+  "dependencies": {
+    "is-predicate": "^0.10.1",
+    "node-uuid": "^1.4.1"
+  }
+}
