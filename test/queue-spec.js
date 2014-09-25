@@ -71,9 +71,7 @@ describe('Queue', function() {
 
     it('should call _run', function() {
       q.push('foo', noop);
-      setImmediate(function() {
-        stub.should.be.calledOnce;
-      });
+      stub.should.be.calledOnce;
     });
   });
 
@@ -133,7 +131,6 @@ describe('Queue', function() {
   });
 
   describe('#remove', function() {
-
     before(function() {
       sinon.stub(Queue.prototype, '_run', noop);
     });
@@ -158,4 +155,92 @@ describe('Queue', function() {
       q.tasks.length.should.equal(1);
     });
   });
+
+  describe('#getAvailWorkers', function() {
+    it('should return the number of avaialble workers', function() {
+      var n = q.getAvailWorkers();
+      n.should.be.a.number;
+      n.should.equal(1); // default conc, and 0 workers running
+    });
+
+    it('should return zero for any number of workers >= to concurrency', function() {
+      q.workers = 2;
+      var n = q.getAvailWorkers();
+      n.should.equal(0);
+    });
+  });
+
+  describe('#remove', function() {
+    var spy = null;
+
+    before(function() {
+      spy = sinon.spy(function(done) {
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      spy.reset();
+    });
+
+    it('should not run if paused', function() {
+      q.stop();
+      q.push(spy);
+      spy.should.not.be.called;
+    });
+
+    it('should not run if there are zero available workers', function() {
+      q.workers = 5;
+      q.push(spy);
+      spy.should.not.be.called;
+    });
+
+    it('should not run if there are zero tasks', function() {
+      q._run();
+      spy.should.not.be.called;
+    });
+
+    it('should run', function(done) {
+      q.push(spy);
+
+      setImmediate(function() {
+        spy.should.be.calledOnce;
+        done();
+      });
+    });
+
+    it('should run 2 tasks concurrently', function(done) {
+      var q = new Queue('name', { concurrency: 2 });
+      q.push(spy);
+      q.push(spy);
+
+      setImmediate(function() {
+        spy.should.be.calledTwice;
+        done();
+      });
+    });
+
+    it('should run 2 tasks concurrently and and queue a third', function(done) {
+      var q = new Queue('name', { concurrency: 2 });
+      var t = 50;
+
+      spy = sinon.spy(function(done) {
+        setTimeout(done, t);
+      });
+
+      q.push(spy);
+      q.push(spy);
+      q.push(spy);
+
+      process.nextTick(function() {
+        spy.should.be.calledTwice;
+
+        setTimeout(function() {
+          spy.should.be.calledThrice;
+          done();
+        }, t);
+      });
+    });
+  });
+
 });
