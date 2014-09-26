@@ -1,7 +1,7 @@
 {
   "name": "multi-queue",
   "version": "0.0.1",
-  "description": "An async multi queue with strategies",
+  "description": "An async multi queue manager",
   "main": "index.js",
   "scripts": {
     "pretest": "jshint index.js ./lib ./test",
@@ -16,7 +16,10 @@
     "queue",
     "multi",
     "key",
-    "async"
+    "async",
+    "flow",
+    "control",
+    "manager"
   ],
   "author": {
     "name": "Trevor Landau",
