@@ -37,6 +37,34 @@ describe('Queue', function() {
     it('should have 0 initial tasks', function() {
       q.tasks.length.should.equal(0);
     });
+
+    it('should call setConcurrency', function() {
+      var spy = sinon.spy(Queue.prototype, 'setConcurrency');
+      var opts = { concurrency: 5 };
+      new Queue('name', opts);
+      spy.should.be.calledOnce;
+      spy.should.be.calledWith(opts.concurrency);
+      spy.restore();
+    });
+  });
+
+  describe('#setConcurrency', function() {
+    it('should not allow values less than 1', function() {
+      q.setConcurrency(0);
+      q.concurrency.should.equal(1);
+    });
+
+    it('should update concurrency', function() {
+      q.setConcurrency(10);
+      q.concurrency.should.equal(10);
+    });
+
+    it('should not update concurrency if value is unchanged', function() {
+      q.setConcurrency(10);
+      q.concurrency.should.equal(10);
+      q.setConcurrency(10);
+      q.concurrency.should.equal(10);
+    });
   });
 
   describe('#push', function() {

@@ -140,3 +140,4 @@ mq.start('foo');
 
 ## TODO
 - Timeout tasks
+- Active concurrency (When a task with a differenct concurrency is added to the queue update value)
