@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/landau/node-multi-queue.svg?branch=master)](https://travis-ci.org/landau/node-multi-queue)
+
 node-multi-queue
 ================
 
