@@ -17,16 +17,11 @@ An async queue.
 var mqueue = require('multi-queue');
 var mq = mqueue();
 
-q.on('drain:tweets', function(info) {
-  console.log(info.queue); // tweets
-  console.log(info.length); // 0
-});
-
 // Request pages 1 - 5,
 // 3 pages at a time
-// disallow duplicate requests per unique
+// disallow duplicate requests per unique, page 2 will NOT run twice
 [1, 2, 2, 3, 4, 5].forEach(function(page) {
-  q.push('tweets', function(done) {
+  mq.push('tweets', function(done) {
     twitter.fetchPage(page, function(err, tweets) {
       // Do some stuff with tweets
       done(); // 
@@ -50,8 +45,8 @@ var q = new Queue();
 If no key is provided then the task is added to the default queue.
 
 ```js
-var q = new Queue();
-q.push('repos', function(done) {
+var mq = mqueue();
+mq.push('repos', function(done) {
   github.getRepos(function (err, repos) {
     // do some stuff
     done();
@@ -70,12 +65,12 @@ By specifying a name for a task you gain the ability to call the following metho
 This option guarantees your tasks are unique.
 
 ```js
-var q = new Queue();
-q.push(getTweets, { unique: 'tweets' });
-q.push(getTweets, { name: 'tweets', unique: true }); // equivalent to the above
+var mq = mqueue();
+mq.push(getTweets, { unique: 'tweets' });
+mq.push(getTweets, { name: 'tweets', unique: true }); // equivalent to the above
 
-q.push(getTweetsAgain, { unique: 'tweets' }); // Will not be added to queue
-q.push('myKey', getTweetsAgain, { unique: 'tweets' }); // Added to the myKey queue
+mq.push(getTweetsAgain, { unique: 'tweets' }); // Will not be added to queue
+mq.push('myKey', getTweetsAgain, { unique: 'tweets' }); // Added to the myKey queue
 ```
 
 > Note: If a `string` value is set to `unique` then that will act as a name and unique will
