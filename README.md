@@ -127,22 +127,15 @@ Remove a task(`name`) from the queue(`key`).
 
 `Queue` extends `EventEmitter` and emits the following events:
 
-> You can listen to a specific queue's events by namespacing as provided by `key`.
-> Ex: `queue.on('drain:myQueue', ...); queue.push('myQueue'....);`
-
-* `start` // Start a queue to begin running tasks
-* `stop`  // Stops a queue from running tasks
-* `empty` // Called when a queue is empty
-* `drain` // Called when a queue is completely exhausted (0 running/queued tasks)
-* `queue` // Called when a new task has been added to a queue
-
-The callback provided to these events will receive the following `object`.
+* `start` // Called when `start` is called
+* `stop`  // Called when a `stop` is called
+* `empty` // Called when a queue is emptied
 
 ```js
-{
-  queue: [key], // name of queue
-  length: [n] // number of remaining tasks in queue
-}
+mq.on('start', function(name) {
+  console.log(name); // foo
+})
+mq.start('foo');
 ```
 
 ## TODO

@@ -1,8 +1,8 @@
 /* jshint expr: true */
 'use strict';
 
-var MultiQueue = require('../../lib').MultiQueue;
-var Queue = require('../../lib').Queue;
+var MultiQueue = require('../lib').MultiQueue;
+var Queue = require('../lib').Queue;
 var Emitter = require('events').EventEmitter;
 var sinon = require('sinon');
 var chai = require('chai');
