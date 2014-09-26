@@ -72,12 +72,12 @@ describe('MultiQueue', function() {
 
     it('should create a new queue if one doesn\'t exist', function() {
       var spy = sinon.spy(mq, '_newQ');
-      var opts = { name: 'hi' };
+      var opts = { name: 'hi', unique: true };
 
       mq.push('foo', noop, opts);
 
       spy.should.be.calledWith('foo', opts);
-      stub.should.be.calledWith(opts.name, noop);
+      stub.should.be.calledWith(opts.name, opts.unique, noop);
     });
 
     it('should call push on a queue', function() {

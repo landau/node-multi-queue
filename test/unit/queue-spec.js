@@ -55,23 +55,23 @@ describe('Queue', function() {
     });
 
     it('should push a task to the tasks array', function() {
-      q.push(noop);
+      q.push(null, null, noop);
       q.tasks[0].fn.should.equal(noop);
     });
 
     it('should ignore duplicate tasks', function() {
-      q.push('foo', noop);
-      q.push('foo', noop);
-      q.push('bar', noop);
-      q.push('bar', noop);
-      q.push('foo', noop);
+      q.push('foo', true, noop);
+      q.push('foo', true, noop);
+      q.push('bar', true, noop);
+      q.push('bar', true, noop);
+      q.push('foo', false, noop);
 
       q.tasks.length.should.equal(2);
     });
 
 
     it('should call _run', function() {
-      q.push('foo', noop);
+      q.push('foo', null, noop);
       stub.should.be.calledOnce;
     });
   });
@@ -174,7 +174,7 @@ describe('Queue', function() {
     });
 
     beforeEach(function() {
-      q.push('foo', noop);
+      q.push('foo', null, noop);
     });
 
     after(function() {
@@ -223,13 +223,13 @@ describe('Queue', function() {
 
     it('should not run if paused', function() {
       q.stop();
-      q.push(spy);
+      q.push(null, null, spy);
       spy.should.not.be.called;
     });
 
     it('should not run if there are zero available workers', function() {
       q.workers = 5;
-      q.push(spy);
+      q.push(null, null, spy);
       spy.should.not.be.called;
     });
 
@@ -239,7 +239,7 @@ describe('Queue', function() {
     });
 
     it('should run', function(done) {
-      q.push(spy);
+      q.push(null, null, spy);
 
       setImmediate(function() {
         spy.should.be.calledOnce;
@@ -249,8 +249,8 @@ describe('Queue', function() {
 
     it('should run 2 tasks concurrently', function(done) {
       var q = new Queue('name', { concurrency: 2 });
-      q.push(spy);
-      q.push(spy);
+      q.push(null, null, spy);
+      q.push(null, null, spy);
 
       setImmediate(function() {
         spy.should.be.calledTwice;
@@ -266,9 +266,9 @@ describe('Queue', function() {
         setTimeout(done, t);
       });
 
-      q.push(spy);
-      q.push(spy);
-      q.push(spy);
+      q.push(null, null, spy);
+      q.push(null, null, spy);
+      q.push(null, null, spy);
 
       process.nextTick(function() {
         spy.should.be.calledTwice;
