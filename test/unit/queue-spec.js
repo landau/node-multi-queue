@@ -1,7 +1,7 @@
 /* jshint expr: true */
 'use strict';
 
-var Queue = require('../lib').Queue;
+var Queue = require('../../lib').Queue;
 var sinon = require('sinon');
 var chai = require('chai');
 chai.should();
