@@ -37,7 +37,6 @@
     "sinon-chai": "^2.5.0"
   },
   "dependencies": {
-    "is-predicate": "^0.10.1",
-    "node-uuid": "^1.4.1"
+    "is-predicate": "^0.10.1"
   }
 }
