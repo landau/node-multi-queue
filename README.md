@@ -79,7 +79,7 @@ q.push(myKey, getTweetsAgain, { unique: 'tweets' }); // Added to the myKey queue
 ```
 
 > Note: Whatever value set to `unique` will name the task as such. In otherwords,
-> it is equivalent to `{ name: 'tweets', unique: true }`.
+> `{unique: 'tweets'}` is equivalent to `{ name: 'tweets', unique: true }`.
 
 #### Option: `concurrency`
 > Default: 1
@@ -103,7 +103,7 @@ Start a queue specified by `key`.
 
 > If `key` is omitted then the default queue is started
 
-### Queue#stop `stop([key], name)`
+### Queue#stop `stop([key])`
 
 Stop a queue specified by `key`.
 

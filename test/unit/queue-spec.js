@@ -69,6 +69,7 @@ describe('Queue', function() {
       q.tasks.length.should.equal(2);
     });
 
+
     it('should call _run', function() {
       q.push('foo', noop);
       stub.should.be.calledOnce;
@@ -80,31 +81,58 @@ describe('Queue', function() {
       q.stop();
       q.paused.should.be.true;
     });
+
+    it('should emit a stop event', function(done) {
+      var spy = sinon.spy(q, 'emit');
+      q.stop();
+      setImmediate(function() {
+        spy.should.be.calledWith('stop', q.name);
+        done();
+      });
+    });
   });
 
   describe('#start', function() {
-    it('should not do anything if the process is not paused', function(done) {
-      var stub = sinon.stub(Queue.prototype, '_run', noop);
+    var stub = null;
 
+    before(function() {
+      stub = sinon.stub(Queue.prototype, '_run', noop);
+    });
+
+    afterEach(function() {
+      stub.reset();
+    });
+
+    after(function() {
+      stub.restore();
+    });
+
+    it('should not do anything if the process is not paused', function(done) {
       q.paused.should.be.false;
 
       q.start();
       setImmediate(function() {
         stub.should.not.be.called;
-        stub.restore();
+        done();
+      });
+    });
+
+    it('should emit a start event', function(done) {
+      var spy = sinon.spy(q, 'emit');
+      q.stop();
+      q.start();
+      setImmediate(function() {
+        spy.should.be.calledWith('start', q.name);
         done();
       });
     });
 
     it('should call _run', function(done) {
-      var stub = sinon.stub(Queue.prototype, '_run', noop);
-
       q.stop();
       q.start();
 
       setImmediate(function() {
         stub.should.be.calledOnce;
-        stub.restore();
         done();
       });
     });
@@ -127,6 +155,16 @@ describe('Queue', function() {
       q.empty();
       q.tasks.should.not.equal(ref);
       q.tasks.length.should.equal(0);
+    });
+
+    it('should emit an empty event', function(done) {
+      var spy = sinon.spy(q, 'emit');
+      q.tasks.push(1);
+      q.empty();
+      setImmediate(function() {
+        spy.should.be.calledWith('empty', q.name);
+        done();
+      });
     });
   });
 
