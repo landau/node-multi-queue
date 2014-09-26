@@ -24,9 +24,9 @@ var mq = mqueue();
   mq.push('tweets', function(done) {
     twitter.fetchPage(page, function(err, tweets) {
       // Do some stuff with tweets
-      done(); // 
+      done(); // Must call done to inform mq that task is complete
     });
-  }, { concurrency: 3, unique: 'fetch' + page })
+  }, { concurrency: 3, unique: 'fetch' + page });
 })
 
 ```
@@ -40,17 +40,47 @@ var Queue = require('multi-queue');
 var q = new Queue();
 ```
 
-### Queue#add `push([key], task, [options])`
+### Queue#push `push([key], task, [options])`
 
-If no key is provided then the task is added to the default queue.
+Add a task to a queue(`key`).
+
+`task` is expected to be a function that receives a single callback argument
+which must be called to continue processing tasks.
+
+> If no key is provided then the task is added to the default queue.
 
 ```js
 var mq = mqueue();
+// add task to the `repos` queue
 mq.push('repos', function(done) {
   github.getRepos(function (err, repos) {
     // do some stuff
-    done();
+    done(); // Must call done to inform mq that the task is complete
   });
+});
+
+// Add to default queue with some concurrency
+mq.push(function(done) {
+  github.getRepos(function (err, repos) {
+    // do some stuff
+    done(); // Must call done to inform mq that the task is complete
+  }, { concurrency: 10 });
+});
+
+// Add to a queue uniquely
+mq.push(function(done) {
+  github.getRepos(function (err, repos) {
+    // do some stuff
+    done(); // Must call done to inform mq that the task is complete
+  }, { unique: 'github' });
+});
+
+// IGNORED
+mq.push(function(done) {
+  github.getRepos(function (err, repos) {
+    // do some stuff
+    done(); // Must call done to inform mq that the task is complete
+  }, { unique: 'github' });
 });
 ```
 
