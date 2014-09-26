@@ -194,7 +194,10 @@ describe('MultiQueue', function() {
 
     before(function() {
       stub = sinon.stub(Queue.prototype, 'remove');
-      sinon.stub(Queue.prototype, 'push');
+    });
+
+    beforeEach(function() {
+      mq.stop();
     });
 
     afterEach(function() {
@@ -203,7 +206,6 @@ describe('MultiQueue', function() {
 
     after(function() {
       stub.restore();
-      Queue.prototype.push.restore();
     });
 
     it('should call remove on a queue', function() {
@@ -215,8 +217,14 @@ describe('MultiQueue', function() {
     });
 
     it('should not call remove if the queue doesn\'t exist', function() {
-      mq.remove('foo');
+      mq.remove('foo', 'foo');
       stub.should.not.be.calledOnce;
+    });
+
+    it('should remove from the default queue if no key is provided', function() {
+      mq.push(noop, {name :'foo'});
+      mq.remove('foo');
+      stub.should.be.calledOnce;
     });
   });
 });

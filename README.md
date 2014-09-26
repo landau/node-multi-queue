@@ -75,26 +75,24 @@ q.push(getTweets, { unique: 'tweets' });
 q.push(getTweets, { name: 'tweets', unique: true }); // equivalent to the above
 
 q.push(getTweetsAgain, { unique: 'tweets' }); // Will not be added to queue
-q.push(myKey, getTweetsAgain, { unique: 'tweets' }); // Added to the myKey queue
+q.push('myKey', getTweetsAgain, { unique: 'tweets' }); // Added to the myKey queue
 ```
 
-> Note: Whatever value set to `unique` will name the task as such. In otherwords,
-> `{unique: 'tweets'}` is equivalent to `{ name: 'tweets', unique: true }`.
+> Note: If a `string` value is set to `unique` then that will act as a name and unique will
+> be set to `true`.
+> In otherwords, `{unique: 'tweets'}` is equivalent to `{ name: 'tweets', unique: true }`.
 
 #### Option: `concurrency`
 > Default: 1
 
-Executes N tasks specified by `concurrency`. `concurrency` is prioritized by the
-first task that specifies it for a given `key`. `concurrency` can be overridden
-once all tasks for a given `key` have completed.
+Executes N tasks specified by `concurrency`. `concurrency` is set by the first task
+to be added to a queue. 
 
 ```js
 var q = new Queue();
 q.push(getTweets, { concurrency: 5 });
 q.push(getTweets, { concurrency: 2 }); // Already set with 5. Ignored
-
-// Some time later after previous requests complete
-q.push(getTweets, { concurrency: 2 }); // Now set to 2
+q.push('tweets', getTweets, { concurrency: 2 }); // Added to different queue, uses 2
 ```
 
 ### Queue#start `start([key])`
