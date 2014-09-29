@@ -227,6 +227,7 @@ mq.on('done', function(err, name, taskName) {
   console.log(taskName); 
 })
 mq.push('foo', someFn, { name: 'bar' });
+```
 
 ```js
 // Expose values
