@@ -102,6 +102,19 @@ describe('Queue', function() {
       q.push('foo', null, noop);
       stub.should.be.calledOnce;
     });
+
+    it('should emit an event when a task is queued', function(done) {
+      var spy = sinon.spy(q, 'emit');
+      q.workers = 1; // simulate a worker already running
+      q.push('bar', false, noop);
+
+      setImmediate(function() {
+        spy.should.be.calledOnce;
+        spy.should.be.calledWith('queue', q.name, 'bar');
+        done();
+      });
+    });
+
   });
 
   describe('#stop', function() {
@@ -236,7 +249,7 @@ describe('Queue', function() {
     });
   });
 
-  describe('#remove', function() {
+  describe('#_run', function() {
     var spy = null;
 
     before(function() {
@@ -307,6 +320,29 @@ describe('Queue', function() {
         }, t);
       });
     });
-  });
 
+    it('should emit run, done, and empty events', function(done) {
+      var spy = sinon.spy(q, 'emit');
+
+      var test = sinon.spy(function(done) {
+        setTimeout(done, 5);
+      });
+
+      q.push('bar', false, test);
+      q.stop();
+      q.push('bar', false, test);
+
+      setTimeout(function() {
+        spy.should.be.calledWithExactly('run', q.name, 'bar');
+        spy.should.be.calledWithExactly('done', q.name, 'bar');
+        spy.should.not.be.calledWithExactly('empty', q.name);
+
+        q.start();
+        setTimeout(function() {
+          spy.should.be.calledWithExactly('empty', q.name);
+          done();
+        }, 5);
+      }, 100);
+    });
+  });
 });

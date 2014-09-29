@@ -152,15 +152,74 @@ Remove a task(`name`) from the queue(`key`).
 
 `Queue` extends `EventEmitter` and emits the following events:
 
-* `start` // Called when `start` is called
-* `stop`  // Called when a `stop` is called
-* `empty` // Called when a queue is emptied
+#### `start` 
+
+Called when `start` is called
 
 ```js
 mq.on('start', function(name) {
   console.log(name); // foo
 })
 mq.start('foo');
+```
+
+#### `stop` 
+
+Called when `stop` is called
+
+```js
+mq.on('stop', function(name) {
+  console.log(name); // foo
+})
+mq.stop('foo');
+```
+
+#### `empty` 
+
+Called when a queue is emptied
+
+```js
+mq.on('empty', function(name) {
+  console.log(name); // name of emptied queue
+})
+mq.empty('foo');
+```
+
+#### `queue` 
+
+Called when a task is added and queued (can't run immediately)
+
+```js
+mq.on('queue', function(name, taskName) {
+  console.log(name); // name of queue added to 'foo'
+  console.log(taskName); // name of task 'bar'
+})
+mq.push('foo', someFn, { name: 'bar', concurrency: 1 });
+mq.push('foo', someFn, { name: 'baz' });
+```
+
+#### `run` 
+
+Called when a task is executed
+
+```js
+mq.on('run', function(name, taskName) {
+  console.log(name); 
+  console.log(taskName); 
+})
+mq.push('foo', someFn, { name: 'bar' });
+```
+
+#### `done` 
+
+Called when a task is completed
+
+```js
+mq.on('done', function(name, taskName) {
+  console.log(name); 
+  console.log(taskName); 
+})
+mq.push('foo', someFn, { name: 'bar' });
 ```
 
 ## TODO
