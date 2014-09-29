@@ -1,6 +1,6 @@
 {
   "name": "multi-queue",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "An async multi queue manager",
   "main": "index.js",
   "scripts": {
