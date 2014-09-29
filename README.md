@@ -214,8 +214,14 @@ mq.push('foo', someFn, { name: 'bar' });
 
 Called when a task is completed
 
+> Pass an error to done in order to test if an error occured in an event
+
 ```js
-mq.on('done', function(name, taskName) {
+function someFn(done) {
+  done(new Error('test'));
+}
+mq.on('done', function(err, name, taskName) {
+  console.log(err.message); // 'test'
   console.log(name); 
   console.log(taskName); 
 })
