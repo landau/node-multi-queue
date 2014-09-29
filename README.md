@@ -150,7 +150,7 @@ Remove a task(`name`) from the queue(`key`).
 
 ### Events
 
-`Queue` extends `EventEmitter` and emits the following events:
+`MultiQueue` extends `EventEmitter` and emits the following events:
 
 #### `start` 
 
