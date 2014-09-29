@@ -324,8 +324,11 @@ describe('Queue', function() {
     it('should emit run, done, and empty events', function(done) {
       var spy = sinon.spy(q, 'emit');
 
+      var err = new Error();
       var test = sinon.spy(function(done) {
-        setTimeout(done, 5);
+        setTimeout(function() {
+          done(err);
+        }, 5);
       });
 
       q.push('bar', false, test);
@@ -334,7 +337,7 @@ describe('Queue', function() {
 
       setTimeout(function() {
         spy.should.be.calledWithExactly('run', q.name, 'bar');
-        spy.should.be.calledWithExactly('done', q.name, 'bar');
+        spy.should.be.calledWithExactly('done', err, q.name, 'bar');
         spy.should.not.be.calledWithExactly('empty', q.name);
 
         q.start();
