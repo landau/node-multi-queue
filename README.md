@@ -192,7 +192,7 @@ Called when a task is added and queued (can't run immediately)
 ```js
 mq.on('queue', function(name, taskName) {
   console.log(name); // name of queue added to 'foo'
-  console.log(taskName); // name of task 'bar'
+  console.log(taskName); // name of task 'baz'. `bar` was not queued
 })
 mq.push('foo', someFn, { name: 'bar', concurrency: 1 });
 mq.push('foo', someFn, { name: 'baz' });
