@@ -214,9 +214,10 @@ mq.push('foo', someFn, { name: 'bar' });
 
 Called when a task is completed
 
-> Pass an error to done in order to test if an error occured in an event
+> Pass values into `done` in order to gain some insight into the task
 
 ```js
+// Expose an error
 function someFn(done) {
   done(new Error('test'));
 }
@@ -226,7 +227,21 @@ mq.on('done', function(err, name, taskName) {
   console.log(taskName); 
 })
 mq.push('foo', someFn, { name: 'bar' });
+
+```js
+// Expose values
+function someFn(done) {
+  done(null, 'hi');
+}
+mq.on('done', function(err, val, name, taskName) {
+  console.log(err); // null
+  console.log(val); // 'hi'
+  console.log(name); 
+  console.log(taskName); 
+})
+mq.push('foo', someFn, { name: 'bar' });
 ```
+
 
 ## TODO
 - Timeout tasks
