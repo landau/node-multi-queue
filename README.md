@@ -210,6 +210,20 @@ mq.on('run', function(name, taskName) {
 mq.push('foo', someFn, { name: 'bar' });
 ```
 
+#### `duplicate` 
+
+Called when a task is executed
+
+```js
+// called once in this scenario
+mq.on('duplicate', function(name, taskName) {
+  console.log(name); // 'foo'
+  console.log(taskName); 'bar'
+})
+mq.push('foo', someFn, { name: 'bar' });
+mq.push('foo', someFn, { name: 'bar' });
+```
+
 #### `done` 
 
 Called when a task is completed

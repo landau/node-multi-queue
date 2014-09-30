@@ -88,6 +88,8 @@ describe('Queue', function() {
     });
 
     it('should ignore duplicate tasks', function() {
+      var spy = sinon.spy(q, 'emit');
+
       q.push('foo', true, noop);
       q.push('foo', true, noop);
       q.push('bar', true, noop);
@@ -95,6 +97,9 @@ describe('Queue', function() {
       q.push('foo', false, noop);
 
       q.tasks.length.should.equal(2);
+      spy.should.be.calledThrice;
+      spy.should.be.calledWithExactly('duplicate', q.name, 'foo');
+      spy.should.be.calledWithExactly('duplicate', q.name, 'bar');
     });
 
 
