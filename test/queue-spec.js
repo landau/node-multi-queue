@@ -87,7 +87,7 @@ describe('Queue', function() {
       q.tasks[0].fn.should.equal(noop);
     });
 
-    it('should ignore duplicate tasks', function() {
+    it('should ignore duplicate tasks in queue', function() {
       var spy = sinon.spy(q, 'emit');
 
       q.push('foo', true, noop);
@@ -100,6 +100,22 @@ describe('Queue', function() {
       spy.should.be.calledThrice;
       spy.should.be.calledWith('duplicate', q.name, 'foo');
       spy.should.be.calledWith('duplicate', q.name, 'bar');
+    });
+
+    it('should ignore duplicate tasks in the running queue', function() {
+      var spy = sinon.spy(q, 'emit');
+
+      // hackery for tests!
+      q.push('foo', true, noop);
+      var t = q.tasks.shift();
+      q._running.push(t);
+
+      q.push('foo', true, noop);
+
+      q._running.length.should.equal(1);
+      q.tasks.length.should.equal(0);
+      spy.should.be.calledOnce;
+      spy.should.be.calledWith('duplicate', q.name, 'foo');
     });
 
 
