@@ -32,11 +32,11 @@
   },
   "homepage": "https://github.com/landau/node-multi-queue",
   "devDependencies": {
-    "chai": "^1.9.1",
+    "chai": "^1.9.2",
     "jshint": "^2.5.6",
     "mocha": "^1.21.4",
     "sinon": "^1.10.3",
-    "sinon-chai": "^2.5.0"
+    "sinon-chai": "^2.6.0"
   },
   "dependencies": {
     "is-predicate": "^0.10.1"

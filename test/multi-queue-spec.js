@@ -25,8 +25,8 @@ describe('MultiQueue', function() {
   });
 
   describe('#constructor', function() {
-    it('should set an empty queues object', function() {
-      Object.keys(mq._queues).length.should.equal(0);
+    it('should create a queues object with a default queue', function() {
+      Object.keys(mq._queues).length.should.equal(1);
     });
   });
 
@@ -55,6 +55,28 @@ describe('MultiQueue', function() {
     });
   });
 
+  describe('#create', function() {
+    it('should create a new queue', function() {
+      var key = 'key';
+      var opts = { concurrency: 5 };
+      var spy = sinon.spy(mq, '_newQ');
+
+      mq.create(key, opts);
+      spy.should.be.calledOnce;
+      spy.should.be.calledWithExactly(key, opts);
+    });
+
+    it('should not create a new queue if it existsj', function() {
+      var key = 'key';
+      var opts = { concurrency: 5 };
+      mq.create(key, opts);
+
+      var spy = sinon.spy(mq, '_newQ');
+      mq.create(key, opts);
+      spy.should.not.be.called;
+    });
+  });
+
   describe('#push', function() {
     var stub = null;
 
@@ -70,20 +92,24 @@ describe('MultiQueue', function() {
       stub.restore();
     });
 
-    it('should create a new queue if one doesn\'t exist', function() {
-      var spy = sinon.spy(mq, '_newQ');
-      var opts = { name: 'hi', unique: true };
+    it('should throw if a queue doesn\'t exist', function() {
+      var opts = { unique: 'hi' };
+      var err = null;
 
-      mq.push('foo', noop, opts);
+      try {
+        mq.push('foo', noop, opts);
+      } catch(e) {
+        err = e;
+      }
 
-      spy.should.be.calledWith('foo', opts);
-      stub.should.be.calledWith(opts.name, opts.unique, noop);
+      err.should.be.an.error;
     });
 
     it('should call push on a queue', function() {
       var spy = sinon.spy(mq, '_newQ');
       var opts = { name: 'hi' };
 
+      mq.create('foo');
       mq.push('foo', noop, opts);
       mq.push('foo', noop, opts);
 
@@ -92,10 +118,8 @@ describe('MultiQueue', function() {
     });
 
     it('should use the default queue if a key is not provided', function() {
-      var spy = sinon.spy(mq, '_newQ');
       mq.push(noop);
       stub.should.be.calledOnce;
-      spy.should.be.calledWith('__main__');
     });
   });
 
@@ -118,6 +142,7 @@ describe('MultiQueue', function() {
 
     it('should call start on a queue', function() {
       var key = 'hi';
+      mq.create(key);
       mq.push(key, noop, {});
       mq.start(key);
       stub.should.be.calledOnce;
@@ -148,6 +173,7 @@ describe('MultiQueue', function() {
 
     it('should call stop on a queue', function() {
       var key = 'hi';
+      mq.create(key);
       mq.push(key, noop, {});
       mq.stop(key);
       stub.should.be.calledOnce;
@@ -178,6 +204,7 @@ describe('MultiQueue', function() {
 
     it('should call empty on a queue', function() {
       var key = 'hi';
+      mq.create(key);
       mq.push(key, noop, {});
       mq.empty(key);
       stub.should.be.calledOnce;
@@ -189,14 +216,15 @@ describe('MultiQueue', function() {
     });
   });
 
-  describe('#remove', function() {
+  describe('#removeTask', function() {
     var stub = null;
 
     before(function() {
       stub = sinon.stub(Queue.prototype, 'remove');
     });
-
+    
     beforeEach(function() {
+      mq.create('hi');
       mq.stop();
     });
 
@@ -208,22 +236,22 @@ describe('MultiQueue', function() {
       stub.restore();
     });
 
-    it('should call remove on a queue', function() {
+    it('should call removeTask on a queue', function() {
       var key = 'hi';
       var name = 'test';
       mq.push(key, noop, { name: name });
-      mq.remove(key, name);
+      mq.removeTask(key, name);
       stub.should.be.calledWith(name);
     });
 
-    it('should not call remove if the queue doesn\'t exist', function() {
-      mq.remove('foo', 'foo');
+    it('should not call removeTask if the queue doesn\'t exist', function() {
+      mq.removeTask('foo', 'foo');
       stub.should.not.be.calledOnce;
     });
 
-    it('should remove from the default queue if no key is provided', function() {
+    it('should removeTask from the default queue if no key is provided', function() {
       mq.push(noop, {name :'foo'});
-      mq.remove('foo');
+      mq.removeTask('foo');
       stub.should.be.calledOnce;
     });
   });

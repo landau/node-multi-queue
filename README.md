@@ -22,13 +22,14 @@ var mq = mqueue();
 // Request pages 1 - 5,
 // 3 pages at a time
 // disallow duplicate requests per unique, page 2 will NOT run twice
+mq.create('tweets', { concurrency: 3 })
 [1, 2, 2, 3, 4, 5].forEach(function(page) {
   mq.push('tweets', function(done) {
     twitter.fetchPage(page, function(err, tweets) {
       // Do some stuff with tweets
-      done(); // Must call done to inform mq that task is complete
+      done(err); // Must call done to inform mq that task is complete
     });
-  }, { concurrency: 3, unique: 'fetch' + page });
+  }, { unique: 'fetch' + page });
 })
 
 ```
@@ -40,6 +41,23 @@ var mq = mqueue();
 ```js
 var Queue = require('multi-queue');
 var q = new Queue();
+```
+
+### Queue#create `push(key, [options])`
+
+Creates a new queue named by `key`.
+
+#### Option: `concurrency`
+> Default: 1 (aka no concurrency)
+
+Executes N tasks specified by `concurrency`.
+
+```js
+var q = new Queue();
+q.create('key', { concurrency: 2 });
+q.push('key', getTweets);
+q.push('key', getTweets);
+q.push('key', getTweets); // queued
 ```
 
 ### Queue#push `push([key], task, [options])`
@@ -59,14 +77,6 @@ mq.push('repos', function(done) {
     // do some stuff
     done(); // Must call done to inform mq that the task is complete
   });
-});
-
-// Add to default queue with some concurrency
-mq.push(function(done) {
-  github.getRepos(function (err, repos) {
-    // do some stuff
-    done(); // Must call done to inform mq that the task is complete
-  }, { concurrency: 10 });
 });
 
 // Add to a queue uniquely
@@ -108,19 +118,6 @@ mq.push('myKey', getTweetsAgain, { unique: 'tweets' }); // Added to the myKey qu
 > Note: If a `string` value is set to `unique` then that will act as a name and unique will
 > be set to `true`.
 > In otherwords, `{unique: 'tweets'}` is equivalent to `{ name: 'tweets', unique: true }`.
-
-#### Option: `concurrency`
-> Default: 1
-
-Executes N tasks specified by `concurrency`. `concurrency` is set by the first task
-to be added to a queue. 
-
-```js
-var q = new Queue();
-q.push(getTweets, { concurrency: 5 });
-q.push(getTweets, { concurrency: 2 }); // Already set with 5. Ignored
-q.push('tweets', getTweets, { concurrency: 2 }); // Added to different queue, uses 2
-```
 
 ### Queue#start `start([key])`
 
