@@ -191,7 +191,7 @@ Called when a queue is emptied
 ```js
 mq.on('empty', function(name) {
   console.log(name); // name of emptied queue
-})
+});
 mq.empty('foo');
 ```
 
@@ -203,7 +203,7 @@ Called when a task is added and queued (can't run immediately)
 mq.on('queue', function(name, taskName, meta) {
   console.log(name); // name of queue added to 'foo'
   console.log(taskName); // name of task 'baz'. `bar` was not queued
-})
+});
 mq.push('foo', someFn, { name: 'bar', concurrency: 1 });
 mq.push('foo', someFn, { name: 'baz' });
 ```
@@ -216,7 +216,7 @@ Called when a task is executed
 mq.on('run', function(name, taskName, meta) {
   console.log(name); 
   console.log(taskName); 
-})
+});
 mq.push('foo', someFn, { name: 'bar' });
 ```
 
@@ -229,7 +229,7 @@ Called when a task is executed
 mq.on('duplicate', function(name, taskName, meta) {
   console.log(name); // 'foo'
   console.log(taskName); 'bar'
-})
+});
 mq.push('foo', someFn, { name: 'bar' });
 mq.push('foo', someFn, { name: 'bar' });
 ```
