@@ -119,6 +119,19 @@ mq.push('myKey', getTweetsAgain, { unique: 'tweets' }); // Added to the myKey qu
 > be set to `true`.
 > In otherwords, `{unique: 'tweets'}` is equivalent to `{ name: 'tweets', unique: true }`.
 
+#### Option: `meta`
+
+Provide meta data to get insight into tasks when listening to events.
+
+```js
+mq.on('run', function(name, taskName, meta) {
+  console.log(meta.id); // 5;
+});
+```
+
+mq.push(uploadData, { meta: { id: 5 } });
+
+
 ### Queue#start `start([key])`
 
 Start a queue specified by `key`.
@@ -187,7 +200,7 @@ mq.empty('foo');
 Called when a task is added and queued (can't run immediately)
 
 ```js
-mq.on('queue', function(name, taskName) {
+mq.on('queue', function(name, taskName, meta) {
   console.log(name); // name of queue added to 'foo'
   console.log(taskName); // name of task 'baz'. `bar` was not queued
 })
@@ -200,7 +213,7 @@ mq.push('foo', someFn, { name: 'baz' });
 Called when a task is executed
 
 ```js
-mq.on('run', function(name, taskName) {
+mq.on('run', function(name, taskName, meta) {
   console.log(name); 
   console.log(taskName); 
 })
@@ -213,7 +226,7 @@ Called when a task is executed
 
 ```js
 // called once in this scenario
-mq.on('duplicate', function(name, taskName) {
+mq.on('duplicate', function(name, taskName, meta) {
   console.log(name); // 'foo'
   console.log(taskName); 'bar'
 })
@@ -232,7 +245,7 @@ Called when a task is completed
 function someFn(done) {
   done(new Error('test'));
 }
-mq.on('done', function(err, name, taskName) {
+mq.on('done', function(err, name, taskName, meta) {
   console.log(err.message); // 'test'
   console.log(name); 
   console.log(taskName); 
@@ -245,7 +258,7 @@ mq.push('foo', someFn, { name: 'bar' });
 function someFn(done) {
   done(null, 'hi');
 }
-mq.on('done', function(err, val, name, taskName) {
+mq.on('done', function(err, val, name, taskName, meta) {
   console.log(err); // null
   console.log(val); // 'hi'
   console.log(name); 
