@@ -107,7 +107,8 @@ describe('MultiQueue', function() {
 
     it('should call push on a queue', function() {
       var spy = sinon.spy(mq, '_newQ');
-      var opts = { name: 'hi' };
+      var meta = {};
+      var opts = { name: 'hi',  meta: meta };
 
       mq.create('foo');
       mq.push('foo', noop, opts);
@@ -115,6 +116,7 @@ describe('MultiQueue', function() {
 
       spy.should.be.calledOnce;
       stub.should.be.calledTwice;
+      stub.should.be.calledWith(opts.name, undefined, noop, opts.meta);
     });
 
     it('should use the default queue if a key is not provided', function() {
@@ -222,7 +224,7 @@ describe('MultiQueue', function() {
     before(function() {
       stub = sinon.stub(Queue.prototype, 'remove');
     });
-    
+
     beforeEach(function() {
       mq.create('hi');
       mq.stop();

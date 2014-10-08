@@ -98,8 +98,8 @@ describe('Queue', function() {
 
       q.tasks.length.should.equal(2);
       spy.should.be.calledThrice;
-      spy.should.be.calledWithExactly('duplicate', q.name, 'foo');
-      spy.should.be.calledWithExactly('duplicate', q.name, 'bar');
+      spy.should.be.calledWith('duplicate', q.name, 'foo');
+      spy.should.be.calledWith('duplicate', q.name, 'bar');
     });
 
 
@@ -341,13 +341,14 @@ describe('Queue', function() {
       q.push('bar', false, test);
 
       setTimeout(function() {
-        spy.should.be.calledWithExactly('run', q.name, 'bar');
-        spy.should.be.calledWithExactly('done', err, q.name, 'bar');
-        spy.should.not.be.calledWithExactly('empty', q.name);
+        spy.should.be.calledWith('run', q.name, 'bar');
+        spy.should.be.calledWith('done', err, q.name, 'bar');
+        spy.should.not.be.calledWith('empty', q.name);
+        spy.reset();
 
         q.start();
         setTimeout(function() {
-          spy.should.be.calledWithExactly('empty', q.name);
+          spy.should.be.calledWith('empty', q.name);
           done();
         }, 5);
       }, 100);
