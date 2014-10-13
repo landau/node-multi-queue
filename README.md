@@ -39,8 +39,8 @@ mq.create('tweets', { concurrency: 3 })
 ### Constructor
 
 ```js
-var Queue = require('multi-queue');
-var q = new Queue();
+var mqueue = require('multi-queue');
+var mq = mqueue(); // Note: Exported is a function to be called, not a class
 ```
 
 ### Queue#create `push(key, [options])`
@@ -53,11 +53,11 @@ Creates a new queue named by `key`.
 Executes N tasks specified by `concurrency`.
 
 ```js
-var q = new Queue();
-q.create('key', { concurrency: 2 });
-q.push('key', getTweets);
-q.push('key', getTweets);
-q.push('key', getTweets); // queued
+var mq = mqueue();
+mq.create('key', { concurrency: 2 });
+mq.push('key', getTweets);
+mq.push('key', getTweets);
+mq.push('key', getTweets); // queued
 ```
 
 ### Queue#push `push([key], task, [options])`
