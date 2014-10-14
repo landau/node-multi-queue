@@ -105,6 +105,20 @@ describe('MultiQueue', function() {
       err.should.be.an.error;
     });
 
+    it('should throw if task is not a function', function() {
+      var opts = { unique: 'hi' };
+      var err = null;
+
+      mq.create('foo');
+      try {
+        mq.push('foo', 1, opts);
+      } catch(e) {
+        err = e;
+      }
+
+      err.should.be.an.error;
+    });
+
     it('should call push on a queue', function() {
       var spy = sinon.spy(mq, '_newQ');
       var meta = {};
@@ -122,6 +136,13 @@ describe('MultiQueue', function() {
     it('should use the default queue if a key is not provided', function() {
       mq.push(noop);
       stub.should.be.calledOnce;
+    });
+
+    it('should add default opts if missing', function() {
+      mq.create('foo');
+      mq.push(noop);
+      mq.push('foo', noop);
+      stub.should.be.calledWith(undefined, undefined, noop, undefined);
     });
   });
 
